@@ -42,7 +42,7 @@ def detalle_Factura(numero, docType):
     listaFacturasAPIQS = {"number": numero, "documentType" : docType}
     FacturasJson = requests.request("GET", listaFacturasAPI, headers=HK.headersDefontana, params=listaFacturasAPIQS).json()[0]
     tipoDocumento = FacturasJson["documentType"]
-    fechaEmision = FacturasJson["dateTime"]
+    fechaEmision = FacturasJson["dateTime"][:19]
     codigoCliente = FacturasJson["clientFile"]
     direccionCliente = FacturasJson["contactIndex"]
     vendedorID = FacturasJson["sellerFileId"]

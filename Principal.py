@@ -2,8 +2,10 @@ import FacturasDefontana as FD
 import TarjetasTrello as TT
 import FechasRelativas as FR
 import positionstack as PS
+import ZeoRoutePlanner as ZRP
 import time
 from datetime import datetime
+from importlib import reload
 
 # Consultar Facturas en defontana
 def obtenerFacturas():
@@ -23,7 +25,7 @@ def cargar_trello(numero, Facturas, tarjetas):
         print(numero, Facturas[numero], "Vacío")
         return None
     else:
-        if numero not in tarjetas and datetime.strptime(fecha, "%Y-%m-%dT%H:%M:%S.%f").date() > FR.hace4dias:
+        if numero not in tarjetas and datetime.strptime(fecha, "%Y-%m-%dT%H:%M:%S").date() > FR.hace4dias:
             if local == "MONS.":
                 etiqueta = TT.etiqueta_Monsalve
                 lista = TT.mons_idList
@@ -32,20 +34,21 @@ def cargar_trello(numero, Facturas, tarjetas):
                 etiqueta = TT.etiqueta_Playa
                 lista = TT.facturas_idList
                 coordenada = ""
+                # coordenada, latitude, longitude= PS.obtenerCoordenadas(direccionCliente, comuna)
+                # ZRP.ingresa_punto(direccionCliente, comuna, latitude, longitude, detalle,fecha,nombre), "\n", detalle, fecha, nombre
             elif local == "Local":
                 etiqueta = TT.etiqueta_Santiago
                 lista = TT.facturas_idList
-                try:
-                    coordenada = PS.obtenerCoordenadas(direccionCliente, comuna)
-                except:
-                    coordenada = ""
+                coordenada = ""
+                # coordenada, latitude, longitude= PS.obtenerCoordenadas(direccionCliente, comuna)
+                # ZRP.ingresa_punto(direccionCliente, comuna, latitude, longitude, detalle,fecha,nombre), "\n", detalle, fecha, nombre
             else:
                 etiqueta = ""
                 lista = TT.facturas_idList
                 coordenada = ""
             TT.post_trello(nombre, detalle, fecha, direccionCliente, comuna, coordenada, idLabels=etiqueta, idList=lista)
         if numero in tarjetas:
-            if datetime.strptime(fecha, "%Y-%m-%dT%H:%M:%S.%f").date() < FR.hace1Semana:
+            if datetime.strptime(fecha, "%Y-%m-%dT%H:%M:%S").date() < FR.hace1Semana:
                 elimina_Trello(numero, tarjetas)
 
 # Archiva tarjetas Trello
@@ -69,7 +72,11 @@ def principal():
 # Bucle que mantiene el programa actualizándose   
 while True:
     print("Actualizando...")
-    principal()
+    try:
+        principal()
+    except Exception as e:
+        print(e)
     print("Actualización: ", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     time.sleep(300) # Tiempo de espera: 5 minutos
-# principal()
+    FR = reload(FR)
+# principal() #Test
