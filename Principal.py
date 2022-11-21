@@ -63,6 +63,7 @@ def elimina_Trello2(Facturas, tarjetas):
 
 # Función principal, que ejecuta las funciones necesarias para correr el código
 def principal():
+    print("Inicio")
     Facturas = obtenerFacturas()
     print("Correcto Facturas")
     tarjetas = obtenerTarjetas()
